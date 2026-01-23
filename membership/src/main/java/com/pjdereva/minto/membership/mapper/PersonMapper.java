@@ -5,7 +5,7 @@ import com.pjdereva.minto.membership.model.Person;
 import com.pjdereva.minto.membership.model.transaction.LifeStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+//import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.Set;

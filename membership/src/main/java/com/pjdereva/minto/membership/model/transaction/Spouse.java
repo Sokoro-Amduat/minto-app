@@ -21,13 +21,13 @@ public class Spouse {
     private Long id;
 
     // Many-to-One relationship to Application (owning side)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id", nullable = false)
     @ToString.Exclude
     @JsonBackReference
     private Application application;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", unique = true)
     @ToString.Exclude
     private Person person;

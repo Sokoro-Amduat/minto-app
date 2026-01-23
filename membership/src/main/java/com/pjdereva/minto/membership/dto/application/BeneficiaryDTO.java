@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class BeneficiaryDTO extends PersonDTO {
+public class BeneficiaryDTO {
 
     private Long id;
+    private PersonDTO person;
     private BigDecimal percentage;
     private String relationship;
     private String notes;

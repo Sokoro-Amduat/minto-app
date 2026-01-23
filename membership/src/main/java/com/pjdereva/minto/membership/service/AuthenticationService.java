@@ -110,6 +110,7 @@ public class AuthenticationService {
         );
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserEmailNotFoundException(request.getEmail()));
+        user.setLastLogin(LocalDateTime.now());
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         tokenService.revokeAllUserTokens(user);

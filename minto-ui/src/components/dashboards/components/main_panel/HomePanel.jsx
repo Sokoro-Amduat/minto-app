@@ -16,7 +16,7 @@ const HomePanel = () => {
             </div>
             <div className="activity-panel">
                 <p className="h5 text-primary"><strong>Applications List</strong></p>
-                <ApplicationsGrid url={"http://localhost:8080/api/v1/applications"} />
+                <ApplicationsGrid url={"http://localhost:8080/api/v1/applications/dto"} />
             </div>
             <div className="activity-panel">
                 <p className="h5 text-info"><strong>People List</strong></p>

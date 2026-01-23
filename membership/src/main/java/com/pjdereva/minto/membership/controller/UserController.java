@@ -1,9 +1,6 @@
 package com.pjdereva.minto.membership.controller;
 
-import com.pjdereva.minto.membership.dto.AddUserDTO;
-import com.pjdereva.minto.membership.dto.GetUserDTO;
-import com.pjdereva.minto.membership.dto.UserDto;
-import com.pjdereva.minto.membership.dto.UserUpdateDto;
+import com.pjdereva.minto.membership.dto.*;
 import com.pjdereva.minto.membership.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,6 +36,18 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         var userDto = userService.getUserById(id);
         return ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<List<UserInfoDTO>> getAllUserInfo() {
+        List<UserInfoDTO> userInfoDTOList = userService.getAllUsersInfo();
+        return ResponseEntity.ok(userInfoDTOList);
+    }
+
+    @GetMapping("/info/{id}")
+    public ResponseEntity<UserInfoDTO> getUserInfoById(@PathVariable Long id) {
+        var userInfoDTO = userService.getUserInfoById(id);
+        return ResponseEntity.ok(userInfoDTO);
     }
 
     @PostMapping("/secure")

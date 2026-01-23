@@ -4,7 +4,7 @@ import com.pjdereva.minto.membership.dto.application.ContactDTO;
 import com.pjdereva.minto.membership.model.Contact;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+//import org.mapstruct.factory.Mappers;
 
 
 import java.util.List;

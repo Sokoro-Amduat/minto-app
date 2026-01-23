@@ -7,6 +7,7 @@ import ApplicationsGrid from "../grid/ApplicationsGrid"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import useFetch from "../hooks/useFetch"
+import { defaultApplication } from "../../model/defaultApplication"
 
 const EditApplication = () => {
     const navigate = useNavigate()
@@ -16,36 +17,7 @@ const EditApplication = () => {
     const [viewApplication, setViewApplication] = useState(false)
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
-    const [formData, setFormData] = useState({
-        id: 0,
-        appCreatedAt: "",
-        appUpdatedAt: "",
-        applicationStatus: "",
-        maritalStatus: "",
-        person: {
-            id: 0,
-            firstName: "",
-            middleName: "",
-            lastName: "",
-            dob: "",
-            lifeStatus: "",
-            createdAt: "",
-            updatedAt: "",
-            contact: {
-                id: 0,
-                addresses: [{ id: 0, type: "", street: "", city: "", state: "", zipcode: "", country: "" }],
-                emails: [{ id: 0, type: "", address: "" }],
-                phones: [{ id: 0, type: "", countryCode: "", number: "" }],
-            },
-        },
-        beneficiaries: [],
-        children: [],
-        parents: [],
-        referees: [],
-        relatives: [],
-        siblings: [],
-        spouses: [],
-    })
+    const [formData, setFormData] = useState({...defaultApplication })
 
     useEffect(() => {
         //console.log('selectedApplication:', selectedApplication)
@@ -119,7 +91,7 @@ const EditApplication = () => {
                             <ApplicationsGrid 
                                 setSelectedApplication={setSelectedApplication} 
                                 setViewApplication={setViewApplication}  
-                                url={"http://localhost:8080/api/v1/applications"}
+                                url={"http://localhost:8080/api/v1/applications/dto"}
                             />
                                 
                         </div>

@@ -2,6 +2,7 @@ package com.pjdereva.minto.membership.dto.application;
 
 
 import com.pjdereva.minto.membership.dto.GetUserDTO;
+import com.pjdereva.minto.membership.model.transaction.ApplicationStatus;
 import com.pjdereva.minto.membership.model.transaction.MaritalStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ public class ApplicationDTO {
 
     private Long id;
     private String applicationNumber;
-    private String applicationStatus;
+    private ApplicationStatus applicationStatus;
     private GetUserDTO user;
     private PersonDTO person;
     private MaritalStatus maritalStatus;

@@ -52,14 +52,14 @@ public class Person {
     private LocalDateTime updatedAt;
 
     // Owning side of the relationship
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "contact_id", unique = true)
     @ToString.Exclude
     @JsonManagedReference
     private Contact contact;
 
     // Bidirectional reference to application (optional, depending on your needs)
-    @OneToOne(mappedBy = "person", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "person", fetch = FetchType.LAZY)
     @ToString.Exclude
     @JsonBackReference
     private Application application;

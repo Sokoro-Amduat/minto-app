@@ -20,6 +20,7 @@ public interface ApplicationService {
     Application saveApplication(Application application);
     List<Application> getAllApplications();
     List<Application> findAllByApplicationStatus(ApplicationStatus applicationStatus);
+    List<Application> findAllByApplicationStatusIn(List<ApplicationStatus> applicationStatuses);
     Optional<Application> findById(Long id);
     Optional<ApplicationDTO> findByIdWithPersonAndContact(Long applicationId);
     boolean existById(Long id);

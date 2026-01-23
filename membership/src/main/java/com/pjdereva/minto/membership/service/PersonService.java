@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface PersonService {
 
+    Optional<Person> addNewPerson(PersonDTO personDTO);
     Optional<Person> createPerson(PersonDTO personDTO);
     PersonDTO savePerson(PersonDTO person);
     List<Person> getAllPeople();

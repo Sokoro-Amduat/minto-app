@@ -2,6 +2,7 @@ package com.pjdereva.minto.membership.controller;
 
 import com.pjdereva.minto.membership.dto.application.PersonDTO;
 import com.pjdereva.minto.membership.exception.PersonNotFoundException;
+import com.pjdereva.minto.membership.mapper.PersonMapper;
 import com.pjdereva.minto.membership.model.Person;
 import com.pjdereva.minto.membership.service.impl.PersonServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +22,18 @@ import java.util.Optional;
 public class PersonController {
 
     private final PersonServiceImpl personService;
+    private final PersonMapper personMapper;
 
     @GetMapping
     public ResponseEntity<List<Person>> getAllPeople() {
         List<Person> people = personService.getAllPeople();
         return ResponseEntity.ok(people);
+    }
+
+    @GetMapping("/dto")
+    public ResponseEntity<List<PersonDTO>> getAllPeopleDTO() {
+        List<Person> people = personService.getAllPeople();
+        return ResponseEntity.ok(personMapper.toPersonDTOs(people));
     }
 
     @GetMapping("/{id}")

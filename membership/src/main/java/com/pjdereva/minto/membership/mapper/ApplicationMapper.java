@@ -4,13 +4,13 @@ import com.pjdereva.minto.membership.dto.application.ApplicationDTO;
 import com.pjdereva.minto.membership.model.transaction.Application;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+//import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.Set;
 
-@Mapper(componentModel = "spring", uses = {PersonMapper.class, ParentMapper.class, SpouseMapper.class,
-ChildMapper.class, SiblingMapper.class, RefereeMapper.class, RelativeMapper.class, BeneficiaryMapper.class,
-UserMapper.class})
+@Mapper(componentModel = "spring", uses = {PersonMapper.class, UserMapper.class, ParentMapper.class,
+ChildMapper.class, SpouseMapper.class, SiblingMapper.class, RefereeMapper.class, RelativeMapper.class, BeneficiaryMapper.class})
 public interface ApplicationMapper {
 
     //ApplicationMapper INSTANCE = Mappers.getMapper(ApplicationMapper.class);
@@ -26,4 +26,6 @@ public interface ApplicationMapper {
     ApplicationDTO toApplicationDTO(Application application);
 
     List<ApplicationDTO> toApplicationDTOs(List<Application> applications);
+    Set<ApplicationDTO> applicationSetToApplicationDTOSet(Set<Application> applicationSet);
+    Set<Application> applicationDTOSetToApplicationSet(Set<ApplicationDTO> applicationDTOSet);
 }

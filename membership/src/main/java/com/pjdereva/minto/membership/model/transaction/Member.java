@@ -30,21 +30,21 @@ public class Member {
     private String membershipNumber;
 
     // NEW: Member belongs to User
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", unique = true, nullable = false)
     @ToString.Exclude
     @JsonManagedReference
     private User user;
 
     // Link to the person (same person as in application)
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", unique = true, nullable = false)
     @ToString.Exclude
     @JsonManagedReference
     private Person person;
 
     // Reference to the approved application that created this membership
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id", unique = true, nullable = false)
     @ToString.Exclude
     @JsonManagedReference

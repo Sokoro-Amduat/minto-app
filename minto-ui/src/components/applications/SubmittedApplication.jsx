@@ -1,64 +1,38 @@
 import PropTypes from 'prop-types'
 import { toast } from 'sonner'
-import { useEffect, useState } from 'react'
-import { CardChecklist, Heart, People, PeopleFill, PersonArmsUp, PersonCheck, PersonCheckFill, PersonCircle, PersonHeart, PersonHearts, PersonLinesFill, PersonRaisedHand, SendCheck, XCircleFill } from 'react-bootstrap-icons'
+//import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { CardChecklist, FolderSymlinkFill, HandThumbsDownFill, HandThumbsUpFill, Heart, People, PeopleFill, PersonArmsUp, PersonCheck, 
+    PersonCheckFill, PersonCircle, PersonHeart, PersonHearts, PersonLinesFill, PersonRaisedHand, SignTurnLeftFill, XOctagonFill } from 'react-bootstrap-icons'
 import LoadingSpinner from '../loading/LoadingSpinner'
 import ViewContactCard from '../person/components/ViewContactCard'
 import MemberPersonInfoCard from '../person/components/MemberPersonInfoCard'
 import { useAuth } from '../hooks/useAuth'
-import useFetch from '../hooks/useFetch'
+//import useFetch from '../hooks/useFetch'
 import ConfirmationModal from '../misc/modals/ConfirmationModal'
 import useConfirmation from '../hooks/useConfirmation'
 import { useNavigate } from 'react-router-dom'
-
-const DEFAULT_APPLICATION = {
-    id: 0,
-    appCreatedAt: "",
-    appUpdatedAt: "",
-    applicationStatus: "",
-    maritalStatus: "",
-    person: {
-        id: 0,
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        dob: "",
-        lifeStatus: "",
-        createdAt: "",
-        updatedAt: "",
-        contact: {
-                id: 0,
-            addresses: [{ id: 0, type: "", street: "", city: "", state: "", zipcode: "", country: "" }],
-            emails: [{ id: 0, type: "", address: "" }],
-            phones: [{ id: 0, type: "", countryCode: "", number: "" }]
-        }
-    },
-    beneficiaries: [],
-    children: [],
-    parents: [],
-    referees: [],
-    relatives: [],
-    siblings: [],
-    spouses: [],
-}
+//import { defaultApplication } from '../../model/defaultApplication'
 
 const SubmittedApplication = (props) => {
-    const { formData, onInputChange, onSubmit, loading } = props
+    const { formData, onReview, onApprove, onReject, loading } = props
+    //const { formData, onInputChange, onSubmit, loading } = props
     const { show, confirmMsg, showConfirmation, handleConfirm, handleCancel } = useConfirmation()
-    const [viewApplicationData, setViewApplicationData] = useState(DEFAULT_APPLICATION)
+    //const [viewApplicationData, setViewApplicationData] = useState({ ...defaultApplication})
     const [showContact, setShowContact] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const { getUser, isAuthenticated } = useAuth()
-    const { fetchWithAuth } = useFetch()
+    //const [isLoading, setIsLoading] = useState(false)
+    const { isAuthenticated } = useAuth()
+    //const { getUser, isAuthenticated } = useAuth()
+    //const { fetchWithAuth } = useFetch()
     const navigate = useNavigate()
-    let user = getUser()
-
+    //let user = getUser()
+/*
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true)
             try {
                 if((formData.id > 0) && user) {
-                    const response = await fetchWithAuth(`http://localhost:8080/api/v1/applications/${formData.id}`, {
+                    const response = await fetchWithAuth(`http://localhost:8080/api/v1/applications/dto/id/${formData.id}`, {
                         method: 'GET',
                         credentials: 'include',
                     })
@@ -70,7 +44,7 @@ const SubmittedApplication = (props) => {
                     }
                     const data = await response.json()
                     setViewApplicationData(data)
-                    //console.log('[SubmittedApplication] - data: ', data)
+                    console.log('[SubmittedApplication] - data: ', data)
                     toast.success('Application data loaded successfully!')
                 } else {
                     console.log('User NOT authenticated. Please login.')
@@ -89,24 +63,43 @@ const SubmittedApplication = (props) => {
             console.log("Cleaned up after fetchData in SubmittedApplication!")
             }
     }, [formData, user, fetchWithAuth])
+*/
 
     const handleToggle = () => {
         setShowContact(!showContact)
     }
 
     const cancel = async () => {
-        const confirmation = await showConfirmation("Are you sure you want to cancel this 'Membership Application'?")
+        const confirmation = await showConfirmation("Are you sure you want to cancel prosessing this Application?")
         if(confirmation) {
             //setFormData(DEFAULT_APPLICATION)
-            console.log("Membership Application Cancelled! The form is reset.")
-            toast.info("'Membership Application' -> Cancelled!", {
-                description: "The form has been reset.",
+            console.log("Processing Application Cancelled! The form is reset.")
+            toast.info("'Processing Application' -> Cancelled!", {
+                description: "The application has been reset.",
             })
             navigate('/login')
         } else {
-            console.log("Cancel Aborted! Continue working on the Membership Application.")
+            console.log("Cancel Aborted! Continue processing the Membership Application.")
             toast.info("Cancel -> Aborted!", {
-                description: "Continue working on the 'Membership Application'.",
+                description: "Continue processing the 'Membership Application'.",
+            })
+        }
+    }
+
+    const reject = async (e) => {
+        const confirmation = await showConfirmation("Are you sure you want to reject this Application?")
+        if(confirmation) {
+            //setFormData(DEFAULT_APPLICATION)
+            onReject(e)
+            console.log("Membership Application Rejected! The application status is set to rejected.")
+            toast.info("'Membership Application' -> Rejected!", {
+                description: "The application has been rejected.",
+            })
+            navigate('/login')
+        } else {
+            console.log("Reject Aborted! Continue processing the Membership Application.")
+            toast.info("Reject -> Aborted!", {
+                description: "Continue processing the 'Membership Application'.",
             })
         }
     }
@@ -115,7 +108,7 @@ const SubmittedApplication = (props) => {
     <>
         <div>
             {
-                isLoading ? (
+                loading ? (
                     <LoadingSpinner caption={'Submitted Application'} clsTextColor={"text-primary"} />
                 ) : (
                     isAuthenticated && (
@@ -124,7 +117,7 @@ const SubmittedApplication = (props) => {
                                 <div className="card-header bg-primary text-white">
                                     <div className="d-flex text-white">
                                         <CardChecklist size={30} className='me-2' />
-                                        <h3 className='ms-1'>Submitted Application Details</h3>
+                                        <h3 className='ms-1'>Application Details: [{formData.applicationStatus}]</h3>
                                     </div>
                                 </div>
                                 <div className="card-body px-1 px-sm-3">
@@ -132,9 +125,9 @@ const SubmittedApplication = (props) => {
                                         <div className="d-flex">
                                             <PersonRaisedHand size={28} />
                                             <span className="h5 ms-2">
-                                                {viewApplicationData.person.lastName},&nbsp;
-                                                {viewApplicationData.person.firstName}&nbsp;
-                                                {viewApplicationData.person.middleName}
+                                                {formData.person.lastName},&nbsp;
+                                                {formData.person.firstName}&nbsp;
+                                                {formData.person.middleName}
                                             </span>
                                         </div>
                                     </div>
@@ -144,10 +137,23 @@ const SubmittedApplication = (props) => {
                                         <div className="col-6 col-xxl-3">
                                             <div className="form-floating mb-3">
                                                 <input 
+                                                    id="applicationNumber"
+                                                    type="text" 
+                                                    className="form-control"
+                                                    value={formData.applicationNumber ?? ''}
+                                                    disabled
+                                                    readOnly
+                                                />
+                                                <label htmlFor="applicationNumber">Application Number</label>
+                                            </div>
+                                        </div>
+                                        <div className="col-6 col-xxl-3">
+                                            <div className="form-floating mb-3">
+                                                <input 
                                                     id="applicationId"
                                                     type="text" 
                                                     className="form-control"
-                                                    value={viewApplicationData.id}
+                                                    value={formData.id ?? ''}
                                                     disabled
                                                     readOnly
                                                 />
@@ -160,7 +166,7 @@ const SubmittedApplication = (props) => {
                                                     id="appCreatedAt"
                                                     type="text" 
                                                     className="form-control"
-                                                    value={viewApplicationData.appCreatedAt}
+                                                    value={formData.appCreatedAt ?? ''}
                                                     disabled
                                                     readOnly
                                                 />
@@ -173,7 +179,7 @@ const SubmittedApplication = (props) => {
                                                     id="appUpdatedAt"
                                                     type="text" 
                                                     className="form-control"
-                                                    value={viewApplicationData.appUpdatedAt}
+                                                    value={formData.appUpdatedAt ?? ''}
                                                     disabled
                                                     readOnly
                                                 />
@@ -182,31 +188,11 @@ const SubmittedApplication = (props) => {
                                         </div>
                                         <div className="col-6 col-xxl-3">
                                             <div className="form-floating mb-3">
-                                                <select
-                                                    className="form-select" 
-                                                    name="applicationStatus" 
-                                                    id="applicationStatus"
-                                                    value={formData.applicationStatus}
-                                                    onChange={onInputChange}
-                                                >
-                                                    <option value="">Select...</option>
-                                                    <option value="Draft">Draft</option>
-                                                    <option value="Submitted">Submitted</option>
-                                                    <option value="In review">In Review</option>
-                                                    <option value="Approved">Approved</option>
-                                                    <option value="Rejected">Rejected</option>
-                                                    <option value="Withdrawn">Withdrawn</option>
-                                                </select>
-                                                <label htmlFor={"applicationStatus"}>Application Status</label>
-                                            </div>
-                                        </div>
-                                        <div className="col-6 col-xxl-3">
-                                            <div className="form-floating mb-3">
                                                 <input 
                                                     id="maritalStatus"
                                                     type="text" 
                                                     className="form-control"
-                                                    value={viewApplicationData.maritalStatus}
+                                                    value={formData.maritalStatus ?? ''}
                                                     disabled
                                                     readOnly
                                                 />
@@ -219,7 +205,7 @@ const SubmittedApplication = (props) => {
                                                     id="dob"
                                                     type="text" 
                                                     className="form-control"
-                                                    value={viewApplicationData.person.dob}
+                                                    value={formData.person.dob ?? ''}
                                                     disabled
                                                     readOnly
                                                 />
@@ -232,11 +218,24 @@ const SubmittedApplication = (props) => {
                                                     id="lifeStatus"
                                                     type="text" 
                                                     className="form-control"
-                                                    value={viewApplicationData.person.lifeStatus}
+                                                    value={formData.person.lifeStatus ?? ''}
                                                     disabled
                                                     readOnly
                                                 />
                                                 <label htmlFor="lifeStatus">Life Status</label>
+                                            </div>
+                                        </div>
+                                        <div className="col-6 col-xxl-3">
+                                            <div className="form-floating mb-3">
+                                                <input 
+                                                    id="applicationStatus"
+                                                    type="text" 
+                                                    className="form-control"
+                                                    value={formData.applicationStatus || ''}
+                                                    disabled
+                                                    readOnly
+                                                />
+                                                <label htmlFor={"applicationStatus"}>Application Status</label>
                                             </div>
                                         </div>
                                     </div>
@@ -247,11 +246,11 @@ const SubmittedApplication = (props) => {
                                     </div>
                                     {
                                         showContact && (
-                                            <ViewContactCard contact={viewApplicationData.person.contact} />
+                                            <ViewContactCard contact={formData.person.contact} />
                                         )
                                     }
                                     <MemberPersonInfoCard
-                                        peopleData={viewApplicationData.referees}
+                                        peopleData={formData.referees}
                                         headerIcon={PersonCheck}
                                         bodyIcon={PersonCheckFill}
                                         headerTitle={'Reference Information'}
@@ -260,7 +259,7 @@ const SubmittedApplication = (props) => {
                                         priColor={'coral'}
                                     />
                                     <MemberPersonInfoCard
-                                        peopleData={viewApplicationData.relatives}
+                                        peopleData={formData.relatives}
                                         headerIcon={PersonLinesFill}
                                         bodyIcon={PersonLinesFill}
                                         headerTitle={'Club Relatives'}
@@ -269,7 +268,7 @@ const SubmittedApplication = (props) => {
                                         priColor={'teal'}
                                     />
                                     <MemberPersonInfoCard
-                                        peopleData={viewApplicationData.spouses}
+                                        peopleData={formData.spouses}
                                         headerIcon={Heart}
                                         bodyIcon={PersonHeart}
                                         headerTitle={'Spouses Information'}
@@ -278,7 +277,7 @@ const SubmittedApplication = (props) => {
                                         priColor={'crimson'}
                                     />
                                     <MemberPersonInfoCard
-                                        peopleData={viewApplicationData.children}
+                                        peopleData={formData.children}
                                         headerIcon={PersonCircle}
                                         bodyIcon={PersonCircle}
                                         headerTitle={'Children Information'}
@@ -287,7 +286,7 @@ const SubmittedApplication = (props) => {
                                         priColor={'limegreen'}
                                     />
                                     <MemberPersonInfoCard
-                                        peopleData={viewApplicationData.parents}
+                                        peopleData={formData.parents}
                                         headerIcon={People}
                                         bodyIcon={PeopleFill}
                                         headerTitle={'Parents Information'}
@@ -296,7 +295,7 @@ const SubmittedApplication = (props) => {
                                         priColor={'purple'}
                                     />
                                     <MemberPersonInfoCard
-                                        peopleData={viewApplicationData.siblings}
+                                        peopleData={formData.siblings}
                                         headerIcon={PersonArmsUp}
                                         bodyIcon={PersonArmsUp}
                                         headerTitle={'Siblings Information'}
@@ -305,7 +304,7 @@ const SubmittedApplication = (props) => {
                                         priColor={'orange'}
                                     />
                                     <MemberPersonInfoCard
-                                        peopleData={viewApplicationData.beneficiaries}
+                                        peopleData={formData.beneficiaries}
                                         headerIcon={PersonHearts}
                                         bodyIcon={PersonHearts}
                                         headerTitle={'Beneficiaries'}
@@ -314,9 +313,38 @@ const SubmittedApplication = (props) => {
                                         priColor={'saddlebrown'}
                                     />
                                     <div className="text-center my-3">
+                                        {
+                                            (formData.applicationStatus === 'Under review' || formData.applicationStatus === 'Approved') && (
+                                                <>
+                                                    <button type="submit" onClick={reject} className="btn btn-danger mx-3" title='Reject Membership Application'>
+                                                        <span className="d-none d-sm-inline-block">
+                                                            { loading ? 'Updating...' : 'Set Rejected' }
+                                                        </span>
+                                                        <HandThumbsDownFill size={20} className="m-0 ms-sm-1 mb-1" />
+                                                    </button>
+                                                    <ConfirmationModal
+                                                        show={show}
+                                                        message={confirmMsg}
+                                                        onConfirm={handleConfirm}
+                                                        onCancel={handleCancel}
+                                                    />
+                                                </>
+                                            )
+                                        }
+                                        {/*TODO: Create method to change status to 'Returned' and allow user to re-submit the a draft application */}
+                                        {
+                                            (formData.applicationStatus === 'Submitted' || formData.applicationStatus === 'Under review') && (
+                                                <button type="submit" onClick={(e) => onReview(e)} className="btn btn-primary mx-3" title='Return Membership Application'>
+                                                    <span className="d-none d-sm-inline-block">
+                                                        { loading ? 'Updating...' : 'Return to User' }
+                                                    </span>
+                                                    <SignTurnLeftFill size={20} className="m-0 ms-sm-1 mb-1" />
+                                                </button>
+                                            )
+                                        }
                                         <button type='button' onClick={cancel} className="btn btn-outline-danger mx-3" title='Cancel Application Review'>
                                             <span className="d-none d-sm-inline-block">Cancel</span>
-                                            <XCircleFill size={20} className="m-0 ms-sm-1 mb-1" />
+                                            <XOctagonFill size={20} className="m-0 ms-sm-1 mb-1" />
                                         </button>
                                         <ConfirmationModal
                                             show={show}
@@ -324,18 +352,30 @@ const SubmittedApplication = (props) => {
                                             onConfirm={handleConfirm}
                                             onCancel={handleCancel}
                                         />
-                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-success mx-3" title='Update Membership Application'>
-                                            <span className="d-none d-sm-inline-block">
-                                                { loading ? 'Updataing...' : 'Update' }
-                                            </span>
-                                            <SendCheck size={20} className="m-0 ms-sm-1 mb-1" />
-                                        </button>
+                                        {
+                                            formData.applicationStatus === 'Submitted' && (
+                                                <button type="submit" onClick={(e) => onReview(e)} className="btn btn-success mx-3" title='Set Membership Application Under Review'>
+                                                    <span className="d-none d-sm-inline-block">
+                                                        { loading ? 'Updating...' : 'Set Under Review' }
+                                                    </span>
+                                                    <FolderSymlinkFill size={20} className="m-0 ms-sm-1 mb-1" />
+                                                </button>  
+                                            )
+                                        }
+                                        {
+                                            formData.applicationStatus === 'Under review' && (   
+                                                <button type="submit" onClick={(e) => onApprove(e)} className="btn btn-success mx-3" title='Approve Membership Application'>
+                                                    <span className="d-none d-sm-inline-block">
+                                                        { loading ? 'Updating...' : 'Set Approved' }
+                                                    </span>
+                                                    <HandThumbsUpFill size={20} className="m-0 ms-sm-1 mb-1" />
+                                                </button> 
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </div>
-                            
-                            
-                        </>
+                          </>
                     )
                 )
             }
@@ -347,7 +387,9 @@ const SubmittedApplication = (props) => {
 SubmittedApplication.propTypes = {
     formData: PropTypes.object,
     onInputChange: PropTypes.func,
-    onSubmit: PropTypes.func,
+    onReview: PropTypes.func,
+    onApprove: PropTypes.func,
+    onReject: PropTypes.func,
     loading: PropTypes.bool,
 }
 

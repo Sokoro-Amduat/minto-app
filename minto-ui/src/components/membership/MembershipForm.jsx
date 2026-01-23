@@ -674,7 +674,7 @@ const MembershipForm = (props) => {
         
         try {
             if(isAuthenticated) {
-                const response = await fetchWithAuth('http://localhost:8080/api/v1/applications/draft', {
+                const response = await fetchWithAuth('http://localhost:8080/api/v1/applications', {
                     method: 'POST',
                     credentials: "include",
                     headers: { 

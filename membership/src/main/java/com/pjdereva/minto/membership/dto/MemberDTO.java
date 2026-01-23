@@ -1,6 +1,8 @@
 package com.pjdereva.minto.membership.dto;
 
 
+import com.pjdereva.minto.membership.dto.application.ApplicationDTO;
+import com.pjdereva.minto.membership.dto.application.PersonDTO;
 import com.pjdereva.minto.membership.model.transaction.MembershipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,9 +17,9 @@ public class MemberDTO {
 
     private Long id;
     private String membershipNumber;
-    private Long userId;
-    private Long personId;
-    private Long applicationId;
+    private GetUserDTO user;
+    private PersonDTO person;
+    private ApplicationDTO application;
     private MembershipStatus status;
     private String startDate;
     private String endDate;

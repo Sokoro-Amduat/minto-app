@@ -36,6 +36,7 @@ import ProcessApplicationPage from "./components/pages/application_pages/Process
 import PeoplePage from "./components/pages/person_pages/PeoplePage";
 import { useAuth } from "./components/hooks/useAuth";
 import AuthPage from "./components/pages/AuthPage";
+import DraftApplicationPage from "./components/pages/draft_app_pages/DraftApplicationPages";
 
 const App = () => {
   const { isAuthenticated } = useAuth()
@@ -78,6 +79,8 @@ const App = () => {
             <Route path="/edit-application" element={<EditApplicationPage />} />
             <Route path="/add-application" element={<AddApplicationPage />} />
             <Route path="/applications" element={<ApplicationsPage />} />
+
+            <Route path="/draft-application" element={<DraftApplicationPage />} />
 
             <Route path="/view-all-members" element={<ViewAllMembersPage />} />
             <Route path="/view-member" element={<ViewMember />} />

@@ -9,11 +9,11 @@ import org.mapstruct.Mapping;
 import java.util.List;
 import java.util.Set;
 
-@Mapper(componentModel = "spring", uses = {ContactMapper.class, PersonMapper.class})
+@Mapper(componentModel = "spring", uses = {PersonMapper.class})
 public interface ChildMapper {
 
     //ChildMapper INSTANCE = Mappers.getMapper(ChildMapper.class);
-
+    /*
     @Mapping(target = "person.firstName", source = "childDTO.firstName")
     @Mapping(target = "person.middleName", source = "childDTO.middleName")
     @Mapping(target = "person.lastName", source = "childDTO.lastName")
@@ -21,10 +21,10 @@ public interface ChildMapper {
     @Mapping(target = "person.lifeStatus", source = "childDTO.lifeStatus")
     @Mapping(target = "person.createdAt", source = "childDTO.createdAt")
     @Mapping(target = "person.updatedAt", source = "childDTO.updatedAt")
-    @Mapping(target = "person.contact", source = "childDTO.contact")
+    @Mapping(target = "person.contact", source = "childDTO.contact") */
     @Mapping(target = "application", ignore = true)
     Child toChild(ChildDTO childDTO);
-
+    /*
     @Mapping(target = "firstName", source = "child.person.firstName")
     @Mapping(target = "middleName", source = "child.person.middleName")
     @Mapping(target = "lastName", source = "child.person.lastName")
@@ -32,7 +32,7 @@ public interface ChildMapper {
     @Mapping(target = "lifeStatus", source = "child.person.lifeStatus")
     @Mapping(target = "createdAt", source = "child.person.createdAt", dateFormat = "yyyy-MM-dd HH:mm:ss")
     @Mapping(target = "updatedAt", source = "child.person.updatedAt", dateFormat = "yyyy-MM-dd HH:mm:ss")
-    @Mapping(target = "contact", source = "child.person.contact")
+    @Mapping(target = "contact", source = "child.person.contact") */
     ChildDTO toChildDTO(Child child);
 
     List<ChildDTO> toChildDTOs(List<Child> children);

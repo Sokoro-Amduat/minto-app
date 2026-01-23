@@ -8,7 +8,7 @@ const LoadingSpinner = (props) => {
         <>
             <div className="container mt-5 pt-4">
                 <h3 className={clsTextColor}>Loading {caption}...</h3>
-                <div className={`d-flex justify-content-center align-items-center ${clsTextColor}`} style={{ height: '30vh' }}>
+                <div className={`d-flex justify-content-center align-items-center ${clsTextColor}`} style={{ height: '20vh' }}>
                     <Spinner animation="border" role="status">
                         <span className="visually-hidden">Loading...</span>
                     </Spinner>

@@ -1,10 +1,8 @@
 package com.pjdereva.minto.membership.service;
 
-import com.pjdereva.minto.membership.dto.AddUserDTO;
-import com.pjdereva.minto.membership.dto.GetUserDTO;
-import com.pjdereva.minto.membership.dto.UserDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pjdereva.minto.membership.dto.*;
 import com.pjdereva.minto.membership.exception.UserEmailNotFoundException;
-import com.pjdereva.minto.membership.dto.UserUpdateDto;
 import com.pjdereva.minto.membership.exception.UserIdNotFoundException;
 import com.pjdereva.minto.membership.mapper.UserMapper;
 import com.pjdereva.minto.membership.model.*;
@@ -60,9 +58,20 @@ public class UserService {
         return userMapper.toUserDto(existingUser);
     }
 
+    public UserInfoDTO getUserInfoById(Long id) {
+        var existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserIdNotFoundException(id));
+        return userMapper.toUserInfoDTO(existingUser);
+    }
+
     public List<GetUserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return userMapper.toGetUserDTOs(users);
+    }
+
+    public List<UserInfoDTO> getAllUsersInfo() {
+        List<User> users = userRepository.findAll();
+        return userMapper.toUserInfoDTOs(users);
     }
 
     public UserDto updateUserByEmail(UserUpdateDto userUpdateDto) {
@@ -97,6 +106,11 @@ public class UserService {
             }
             if (updates.containsKey("picture")) {
                 user.setPicture((String) updates.get("picture"));
+            }
+            if (updates.containsKey("person")) {
+                ObjectMapper mapper = new ObjectMapper();
+                Person person = mapper.convertValue(updates.get("person"), Person.class);
+                user.setPerson(person);
             }
             user.setUpdatedAt(LocalDateTime.now());
             return userMapper.toUserDto(userRepository.save(user));

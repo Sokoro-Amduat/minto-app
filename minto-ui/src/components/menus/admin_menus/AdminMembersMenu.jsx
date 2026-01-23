@@ -13,6 +13,9 @@ const AdminMembersMenu = () => {
                     <Dropdown.Item as={Link} to="/members" title="Main Members Page">
                         Main Members Page
                     </Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/draft-application" title="Draft Application">
+                        My Application
+                    </Dropdown.Item>
                     <Dropdown.Item as={Link} to="/membership-form" title="Membership Application">
                         Membership Application
                     </Dropdown.Item>

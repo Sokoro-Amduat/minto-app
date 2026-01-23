@@ -42,7 +42,7 @@ public class DraftApplicationController {
         log.info("Saving draft for user: {} {}", user.getFirstName(),user.getLastName());
 
         try {
-            Application application = draftApplicationService.saveDraft(user, draft);
+            ApplicationDTO application = draftApplicationService.saveDraft(user, draft);
 
             DraftResponse response = DraftResponse.builder()
                     .success(true)
@@ -129,12 +129,13 @@ public class DraftApplicationController {
         log.debug("Auto-saving draft for user: {} {}", user.getFirstName(), user.getLastName());
 
         try {
-            Application application = draftApplicationService.saveDraft(user, draft);
+            ApplicationDTO application = draftApplicationService.saveDraft(user, draft);
 
             AutoSaveResponse response = AutoSaveResponse.builder()
                     .success(true)
                     .savedAt(LocalDateTime.now())
                     .applicationId(application.getId())
+                    .applicationNumber(application.getApplicationNumber())
                     .build();
 
             return ResponseEntity.ok(response);
@@ -145,6 +146,41 @@ public class DraftApplicationController {
                     .success(false)
                     .error(e.getMessage())
                     .build());
+        }
+    }
+
+    /**
+     * Submit draft application
+     * POST /api/v1/applications/draft/submit
+     */
+    @PostMapping("/submit")
+    public ResponseEntity<DraftResponse> submitDraft(
+            @RequestBody ApplicationDTO applicationDTO,
+            Principal currentUser
+    ) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) currentUser).getPrincipal();
+
+        log.info("Submitting draft for user: {} {}", user.getFirstName(),user.getLastName());
+
+        try {
+            ApplicationDTO application = draftApplicationService.submitDraft(user, applicationDTO);
+            log.info("✓ Draft application submitted: {}", application.getApplicationNumber());
+
+            DraftResponse response = DraftResponse.builder()
+                    .success(true)
+                    .message("Draft application submitted successfully")
+                    .applicationId(application.getId())
+                    .applicationNumber(application.getApplicationNumber())
+                    .build();
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error saving draft application", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(DraftResponse.builder()
+                            .success(false)
+                            .message("Failed to submit draft application: " + e.getMessage())
+                            .build());
         }
     }
 }

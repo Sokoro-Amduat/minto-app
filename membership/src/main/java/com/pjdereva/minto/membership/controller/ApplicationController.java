@@ -1,16 +1,23 @@
 package com.pjdereva.minto.membership.controller;
 
+import com.pjdereva.minto.membership.exception.ApplicationIdNotFoundException;
+import com.pjdereva.minto.membership.mapper.ApplicationMapper;
+import com.pjdereva.minto.membership.model.User;
 import com.pjdereva.minto.membership.model.transaction.Application;
 import com.pjdereva.minto.membership.model.transaction.ApplicationStatus;
 import com.pjdereva.minto.membership.dto.application.ApplicationDTO;
 import com.pjdereva.minto.membership.service.impl.ApplicationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -20,6 +27,7 @@ import java.util.Optional;
 public class ApplicationController {
 
     private final ApplicationServiceImpl applicationService;
+    private final ApplicationMapper applicationMapper;
 
     @GetMapping
     public ResponseEntity<List<Application>> getAllApplications() {
@@ -27,24 +35,51 @@ public class ApplicationController {
         return ResponseEntity.ok(applications);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getApplicationById(@PathVariable Long id) {
-        var application = applicationService.findById(id);
-        return ResponseEntity.ok(application);
+    @GetMapping("/dto")
+    public ResponseEntity<List<ApplicationDTO>> getAllApplicationsDTO() {
+        List<Application> applications = applicationService.getAllApplications();
+        return ResponseEntity.ok(applicationMapper.toApplicationDTOs(applications));
     }
 
+    @GetMapping("/id/{id}")
+    public ResponseEntity<?> getApplicationById(@PathVariable Long id) {
+        var application = applicationService.findById(id);
+        return application.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseThrow(() -> new ApplicationIdNotFoundException(id));
+    }
+
+    @GetMapping("/dto/id/{id}")
+    public ResponseEntity<?> getApplicationDTOById(@PathVariable Long id) {
+        var application = applicationService.findById(id);
+        return application.map(value -> new ResponseEntity<>(applicationMapper.toApplicationDTO(value), HttpStatus.OK))
+                .orElseThrow(() -> new ApplicationIdNotFoundException(id));
+    }
+
+    // TODO: Fix repository SQL
     @GetMapping("/person/{id}")
     public ResponseEntity<?> getApplicationByIdWithPersonAndContact(@PathVariable Long id) {
         var applicationDTO = applicationService.findByIdWithPersonAndContact(id);
-        return ResponseEntity.ok(applicationDTO);
+        return applicationDTO.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseThrow(() -> new ApplicationIdNotFoundException(id));
     }
 
-    @GetMapping("/app-status/{appStatus}")
-    public ResponseEntity<List<Application>> getAllByApplicationStatus(
+    @GetMapping("/status/{appStatus}")
+    public ResponseEntity<List<ApplicationDTO>> getAllByApplicationStatus(
             @PathVariable String appStatus
     ) {
         List<Application> applications = applicationService.findAllByApplicationStatus(ApplicationStatus.fromLabel(appStatus));
-        return ResponseEntity.ok(applications);
+        return ResponseEntity.ok(applicationMapper.toApplicationDTOs(applications));
+    }
+
+    @GetMapping("/status/in/{appStatuses}")
+    public ResponseEntity<List<ApplicationDTO>> getAllByApplicationStatusIn(
+            @PathVariable List<String> appStatuses
+    ) {
+        List<ApplicationStatus> statuses = appStatuses.stream()
+                .map(ApplicationStatus::fromLabel)
+                .toList();
+        List<Application> applications = applicationService.findAllByApplicationStatusIn(statuses);
+        return ResponseEntity.ok(applicationMapper.toApplicationDTOs(applications));
     }
 
     @PostMapping
@@ -61,7 +96,7 @@ public class ApplicationController {
     @PutMapping
     public ResponseEntity<?> updateApplication(@RequestBody Application application) {
         var app = applicationService.updateApplication(application);
-        return ResponseEntity.ok(app);
+        return ResponseEntity.ok(applicationMapper.toApplicationDTO(app));
     }
 
     @DeleteMapping("/{id}")
@@ -88,9 +123,9 @@ public class ApplicationController {
         try {
             app = applicationService.createApplicationForUser(applicationDTO.getUser().getId());
         } catch (Exception e) {
-            return ResponseEntity.ok(e.getMessage());
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
-        return ResponseEntity.ok(app);
+        return ResponseEntity.ok(applicationMapper.toApplicationDTO(app));
     }
 
     @PostMapping("/add-people")
@@ -100,7 +135,7 @@ public class ApplicationController {
             applicationService.addPeopleAndOtherInfo(applicationDTO);
         } catch (Exception e) {
             log.error("Add people failed: {}", e.getMessage());
-            return ResponseEntity.ok(e.getMessage());
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
         return ResponseEntity.ok("Family members, referees and beneficiaries added to application " +
                 applicationDTO.getApplicationNumber());
@@ -112,32 +147,55 @@ public class ApplicationController {
             applicationService.submitApplication(applicationDTO.getId(),
                     applicationDTO.getUser().getId());
         } catch (Exception e) {
-            return ResponseEntity.ok(e.getMessage());
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
         return ResponseEntity.ok("Application " + applicationDTO.getApplicationNumber() +
                 " submitted successfully.");
     }
 
     @PostMapping("/review")
-    public ResponseEntity<?> setApplicationUnderReview(@RequestBody ApplicationDTO applicationDTO) {
+    public ResponseEntity<?> setApplicationUnderReview(
+            @RequestBody ApplicationDTO applicationDTO,
+            Principal currentUser
+    ) {
+        // TODO: Fix authorization using security configuration
+        var user = (User) ((UsernamePasswordAuthenticationToken) currentUser).getPrincipal();
+
         try {
-            applicationService.setApplicationUnderReview(applicationDTO.getId());
+            if(user.isAdmin() || user.isStaff()) {
+                applicationService.setApplicationUnderReview(applicationDTO.getId());
+                return ResponseEntity.ok("Application: " + applicationDTO.getApplicationNumber()  +
+                        ", is now under review.");
+            } else {
+                return ResponseEntity.ok("User: " + user.getFirstName() + " " + user.getLastName() +
+                        ", has insufficient access.");
+            }
         } catch (Exception e) {
-            return ResponseEntity.ok(e.getMessage());
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
-        return ResponseEntity.ok("Application: " + applicationDTO.getApplicationNumber()  +
-                ", is now under review.");
     }
 
     @PostMapping("/approve")
-    public ResponseEntity<?> approveApplication(@RequestBody Application application) {
-        Application app = null;
+    public ResponseEntity<?> approveApplication(
+            @RequestBody ApplicationDTO applicationDTO,
+            Principal currentUser
+    ) {
+        // TODO: Fix authorization using security configuration
+        var user = (User) ((UsernamePasswordAuthenticationToken) currentUser).getPrincipal();
+
         try {
-            app = applicationService.createApplicationForUser(application.getUser().getId());
+            if(user.isAdmin() || user.isStaff()) {
+                applicationService.approveApplication(applicationDTO.getId());
+                return ResponseEntity.ok("Application: " + applicationDTO.getApplicationNumber() +
+                        ", approved by " + user.getFirstName() + " " + user.getLastName() + ".");
+            } else {
+                return ResponseEntity.ok("User: " + user.getFirstName() + " " + user.getLastName() +
+                        ", has insufficient access.");
+            }
+            //app = applicationService.createApplicationForUser(application.getUser().getId());
         } catch (Exception e) {
-            return ResponseEntity.ok(e.getMessage());
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
-        return ResponseEntity.ok(app);
     }
 
     @PostMapping("/reject")
@@ -146,7 +204,7 @@ public class ApplicationController {
             applicationService.rejectApplication(applicationDTO.getId(),
                     applicationDTO.getRejectionReason());
         } catch (Exception ex) {
-            return ResponseEntity.ok(ex.getMessage());
+            return ResponseEntity.unprocessableEntity().body(ex.getMessage());
         }
         return ResponseEntity.ok("Application: " + applicationDTO.getApplicationNumber() +
                 " rejected for the following reason: " + applicationDTO.getRejectionReason());
@@ -158,7 +216,7 @@ public class ApplicationController {
             applicationService.withdrawApplication(applicationDTO.getId(),
                     applicationDTO.getUser().getId());
         } catch (Exception e) {
-            return ResponseEntity.ok(e.getMessage());
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
         return ResponseEntity.ok("Application: " + applicationDTO.getApplicationNumber() +
                 ", withdrawn by the user.");

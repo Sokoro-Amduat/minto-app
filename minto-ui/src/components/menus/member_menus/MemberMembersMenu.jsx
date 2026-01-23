@@ -10,8 +10,8 @@ const MemberMembersMenu = () => {
                 </Dropdown.Toggle>
                 
                 <Dropdown.Menu id="collapsible-nav-dropdown">
-                    <Dropdown.Item as={Link} to="/membership-form" title="Membership Application">
-                        Membership Application
+                    <Dropdown.Item as={Link} to="/draft-application" title="Draft Application">
+                        My Application
                     </Dropdown.Item>
                     <Dropdown.Divider />
                     <Dropdown.Item as={Link} to="/member-profile" title="Member Profile">

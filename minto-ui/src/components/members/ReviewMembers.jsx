@@ -7,45 +7,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import useFetch from "../hooks/useFetch"
 import AddMember from "./AddMember"
-
-const DEFAULT_APPLICATION = {
-    id: 0,
-    appCreatedAt: "",
-    appUpdatedAt: "",
-    applicationStatus: "",
-    maritalStatus: "",
-    person: {
-        id: 0,
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        dob: "",
-        lifeStatus: "",
-        createdAt: "",
-        updatedAt: "",
-        contact: {
-            id: 0,
-            addresses: [{ id: 0, type: "", street: "", city: "", state: "", zipcode: "", country: "" }],
-            emails: [{ id: 0, type: "", address: "" }],
-            phones: [{ id: 0, type: "", countryCode: "", number: "" }],
-        },
-    },
-    beneficiaries: [],
-    children: [],
-    parents: [],
-    referees: [],
-    relatives: [],
-    siblings: [],
-    spouses: [],
-}
-
-const DEFAULT_MEMBER = {
-    id: 0,
-    userId: 0,
-    memberCreatedAt: "",
-    memberUpdatedAt: "",
-    application: DEFAULT_APPLICATION,
-}
+import { defaultMember } from "../../model/defaultMember"
 
 const ReviewMembers = () => {
     const navigate = useNavigate()
@@ -55,7 +17,7 @@ const ReviewMembers = () => {
     const [viewApplication, setViewApplication] = useState(false)
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
-    const [formData, setFormData] = useState(DEFAULT_MEMBER)
+    const [formData, setFormData] = useState({ ...defaultMember })
 
     useEffect(() => {
         console.log('selectedApplication:', selectedApplication)
@@ -132,7 +94,7 @@ const ReviewMembers = () => {
                             <ApplicationsGrid 
                                 setSelectedApplication={setSelectedApplication} 
                                 setViewApplication={setViewApplication}  
-                                url={"http://localhost:8080/api/v1/applications/app-status/submitted"}
+                                url={"http://localhost:8080/api/v1/applications/status/in/approved,rejected,withdrawn"}
                             />
                                 
                         </div>

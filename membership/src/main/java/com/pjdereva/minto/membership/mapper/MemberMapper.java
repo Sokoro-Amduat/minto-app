@@ -4,11 +4,11 @@ import com.pjdereva.minto.membership.dto.MemberDTO;
 import com.pjdereva.minto.membership.model.transaction.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+//import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ContactMapper.class, PersonMapper.class})
+@Mapper(componentModel = "spring", uses = {PersonMapper.class})
 public interface MemberMapper {
 
     //MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);

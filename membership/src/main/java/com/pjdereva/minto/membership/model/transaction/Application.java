@@ -41,21 +41,21 @@ public class Application {
     private ApplicationStatus applicationStatus = ApplicationStatus.DRAFT;
 
     // NEW: Application belongs to User (the applicant)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
     @JsonManagedReference
     private User user;
 
     // Primary applicant - owning side
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", unique = true, nullable = false)
     @ToString.Exclude
     @JsonManagedReference
     private Person person;
 
     // Member created from this application (optional - only after approval)
-    @OneToOne(mappedBy = "application", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
     @ToString.Exclude
     @JsonBackReference
     private Member member;

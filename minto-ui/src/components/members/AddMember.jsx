@@ -12,21 +12,10 @@ import useConfirmation from '../hooks/useConfirmation'
 import { useNavigate } from 'react-router-dom'
 import UserSelectionModal from '../users/UserSelectionModal'
 
-const DEFAULT_USER = {
-    id: 0,
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    role: '',
-    source: '',
-    picture: ''
-}
-
 const AddMember = (props) => {
     const { formData, setFormData, onSubmit, loading } = props
     const { show, confirmMsg, showConfirmation, handleConfirm, handleCancel } = useConfirmation()
-    const [selectedUser, setSelectedUser] = useState(DEFAULT_USER)
+    //const [selectedUser, setSelectedUser] = useState(DEFAULT_USER)
     const [showUsersModal, setShowUsersModal] = useState(false)
     const [showContact, setShowContact] = useState(false)
     const { isAuthenticated } = useAuth()
@@ -95,7 +84,7 @@ const AddMember = (props) => {
     }
 
     const handleAddUser = (userToAdd) => {
-        setSelectedUser(userToAdd)
+        //setSelectedUser(userToAdd)
         addUser(userToAdd)
         setShowUsersModal(false)
     }
@@ -150,7 +139,7 @@ const AddMember = (props) => {
                                                 id="userId"
                                                 type="text" 
                                                 className="form-control"
-                                                value={selectedUser.id}
+                                                value={formData.application.user.id}
                                                 disabled
                                                 readOnly
                                             />
@@ -163,7 +152,7 @@ const AddMember = (props) => {
                                                 id="userId"
                                                 type="text" 
                                                 className="form-control"
-                                                value={selectedUser.email}
+                                                value={formData.application.user.email}
                                                 disabled
                                                 readOnly
                                             />
@@ -176,7 +165,7 @@ const AddMember = (props) => {
                                                 id="userRole"
                                                 type="text" 
                                                 className="form-control"
-                                                value={selectedUser.role}
+                                                value={formData.application.user.role}
                                                 disabled
                                                 readOnly
                                             />

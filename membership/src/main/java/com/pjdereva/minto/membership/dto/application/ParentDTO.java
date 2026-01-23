@@ -1,16 +1,16 @@
 package com.pjdereva.minto.membership.dto.application;
 
+import com.pjdereva.minto.membership.model.transaction.ParentType;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class ParentDTO extends PersonDTO {
+@Builder
+public class ParentDTO {
 
     private Long id;
-    private String parentType;
+    private PersonDTO person;
+    private ParentType parentType;
     private String notes;
 }

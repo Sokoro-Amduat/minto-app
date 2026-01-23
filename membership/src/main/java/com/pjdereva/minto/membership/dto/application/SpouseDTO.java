@@ -1,16 +1,19 @@
 package com.pjdereva.minto.membership.dto.application;
 
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import com.pjdereva.minto.membership.model.transaction.MaritalStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class SpouseDTO extends PersonDTO {
+@Builder
+public class SpouseDTO {
 
     private Long id;
-    private String maritalStatus;
+    private PersonDTO person;
+    private MaritalStatus maritalStatus;
     private String notes;
 }

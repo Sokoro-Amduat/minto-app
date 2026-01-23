@@ -4,12 +4,12 @@ import { toast } from 'sonner'
 import UpdateUser from "./UpdateUser"
 import ViewUser from "./ViewUser"
 import { Search } from "react-bootstrap-icons"
-import { useNavigate } from "react-router-dom"
+//import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import useFetch from "../hooks/useFetch"
 
 const EditUser = () => {
-    const navigate = useNavigate()
+    //const navigate = useNavigate()
     const { getUser, isAuthenticated } = useAuth()
     const { fetchWithAuth } = useFetch()
     const [selectedUser, setSelectedUser] = useState(null)
@@ -100,7 +100,7 @@ const EditUser = () => {
             //console.log(jsonData);
             setMessage(`${jsonData.firstName} ${jsonData.lastName} updated successful`)
             toast.success(`${jsonData.firstName} ${jsonData.lastName} updated successful`)
-            navigate('/login')
+            //navigate('/login')
         } catch (error) {
             console.log(error)
             toast.error('Error updating user. ' + error.message)

@@ -154,13 +154,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Optional<Member> createMember(MemberDTO memberDTO) {
-        var application = applicationRepository.findById(memberDTO.getApplicationId())
-                .orElseThrow(() -> new ApplicationIdNotFoundException(memberDTO.getApplicationId()));
+        var application = applicationRepository.findById(memberDTO.getApplication().getId())
+                .orElseThrow(() -> new ApplicationIdNotFoundException(memberDTO.getApplication().getId()));
 
-        var user = userRepository.findById(memberDTO.getUserId())
-                .orElseThrow(() -> new UserIdNotFoundException(memberDTO.getUserId()));
+        var user = userRepository.findById(memberDTO.getUser().getId())
+                .orElseThrow(() -> new UserIdNotFoundException(memberDTO.getUser().getId()));
 
-        if(!memberRepository.existsByUserIdOrApplicationId(memberDTO.getUserId(), memberDTO.getApplicationId())){
+        if(!memberRepository.existsByUserIdOrApplicationId(memberDTO.getUser().getId(), memberDTO.getApplication().getId())){
             Member newMember = Member.builder()
                     .user(user)
                     .memberCreatedAt(LocalDateTime.now())

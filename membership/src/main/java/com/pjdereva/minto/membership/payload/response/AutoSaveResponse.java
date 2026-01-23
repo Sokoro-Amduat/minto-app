@@ -12,5 +12,6 @@ public class AutoSaveResponse {
     private boolean success;
     private LocalDateTime savedAt;
     private Long applicationId;
+    private String applicationNumber;
     private String error;
 }

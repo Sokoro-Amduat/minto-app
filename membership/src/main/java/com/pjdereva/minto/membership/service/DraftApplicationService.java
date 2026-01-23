@@ -5,8 +5,8 @@ import com.pjdereva.minto.membership.model.transaction.Application;
 import com.pjdereva.minto.membership.dto.application.ApplicationDTO;
 
 public interface DraftApplicationService {
-    Application saveDraft(User user, ApplicationDTO draft);
+    ApplicationDTO saveDraft(User user, ApplicationDTO draft);
     ApplicationDTO loadDraft(Long userId);
     void deleteDraft(Long userId);
-
+    ApplicationDTO submitDraft(User user, ApplicationDTO applicationDTO);
 }

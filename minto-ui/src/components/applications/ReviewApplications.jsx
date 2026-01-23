@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import useFetch from "../hooks/useFetch"
 import SubmittedApplication from "./SubmittedApplication"
+import { defaultApplication } from "../../model/defaultApplication"
 
 const ReviewApplications = () => {
     const navigate = useNavigate()
@@ -16,36 +17,7 @@ const ReviewApplications = () => {
     const [viewApplication, setViewApplication] = useState(false)
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
-    const [formData, setFormData] = useState({
-        id: 0,
-        appCreatedAt: "",
-        appUpdatedAt: "",
-        applicationStatus: "",
-        maritalStatus: "",
-        person: {
-            id: 0,
-            firstName: "",
-            middleName: "",
-            lastName: "",
-            dob: "",
-            lifeStatus: "",
-            createdAt: "",
-            updatedAt: "",
-            contact: {
-                id: 0,
-                addresses: [{ id: 0, type: "", street: "", city: "", state: "", zipcode: "", country: "" }],
-                emails: [{ id: 0, type: "", address: "" }],
-                phones: [{ id: 0, type: "", countryCode: "", number: "" }],
-            },
-        },
-        beneficiaries: [],
-        children: [],
-        parents: [],
-        referees: [],
-        relatives: [],
-        siblings: [],
-        spouses: [],
-    })
+    const [formData, setFormData] = useState({...defaultApplication })
 
     useEffect(() => {
         //console.log('selectedApplication:', selectedApplication)
@@ -63,7 +35,7 @@ const ReviewApplications = () => {
             return () => clearTimeout(timerId)
         }
     }, [selectedApplication, message])
-
+/*
     const onSubmit = async (e) => {
         e.preventDefault();
         setLoading(true)
@@ -98,6 +70,111 @@ const ReviewApplications = () => {
             setLoading(false)
         }
     }
+*/
+    const onReview = async (e) => {
+        e.preventDefault();
+        setLoading(true)
+        //console.log('FormData:', formData)
+
+        try {
+            const response = await fetchWithAuth(`http://localhost:8080/api/v1/applications/review`, {
+                method: 'POST',
+                credentials: "include",
+                headers: { 
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if(!response.ok) {
+                console.log(`HTTP error! status: ${response.status}`)
+                toast.error('HTTP error!')
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const jsonData = await response.json();
+            setFormData(jsonData)
+            //console.log(jsonData);
+            setMessage('Application is set under review successfully')
+            toast.success('Application is set under review successfully')
+            navigate('/login')
+        } catch (error) {
+            console.log(error)
+            toast.error('Error setting application under review. ' + error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const onApprove = async (e) => {
+        e.preventDefault();
+        setLoading(true)
+        //console.log('FormData:', formData)
+
+        try {
+            const response = await fetchWithAuth(`http://localhost:8080/api/v1/applications/approve`, {
+                method: 'POST',
+                credentials: "include",
+                headers: { 
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if(!response.ok) {
+                console.log(`HTTP error! status: ${response.status}`)
+                toast.error('HTTP error!')
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const jsonData = await response.json();
+            setFormData(jsonData)
+            //console.log(jsonData);
+            setMessage('Application is approved successfully')
+            toast.success('Application is approved successfully')
+            navigate('/login')
+        } catch (error) {
+            console.log(error)
+            toast.error('Error approving application. ' + error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const onReject = async (e) => {
+        e.preventDefault();
+        setLoading(true)
+        //console.log('FormData:', formData)
+
+        try {
+            const response = await fetchWithAuth(`http://localhost:8080/api/v1/applications/reject`, {
+                method: 'POST',
+                credentials: "include",
+                headers: { 
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if(!response.ok) {
+                console.log(`HTTP error! status: ${response.status}`)
+                toast.error('HTTP error!')
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const jsonData = await response.json();
+            setFormData(jsonData)
+            //console.log(jsonData);
+            setMessage('Application set to rejected successfully')
+            toast.success('Application set torejected successfully')
+            navigate('/login')
+        } catch (error) {
+            console.log(error)
+            toast.error('Error setting application to rejected. ' + error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const onInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -123,7 +200,7 @@ const ReviewApplications = () => {
                             <ApplicationsGrid 
                                 setSelectedApplication={setSelectedApplication} 
                                 setViewApplication={setViewApplication} 
-                                url={"http://localhost:8080/api/v1/applications/app-status/submitted"} 
+                                url={"http://localhost:8080/api/v1/applications/status/in/submitted,under%20review,returned"} 
                             />
                                 
                         </div>
@@ -137,12 +214,20 @@ const ReviewApplications = () => {
                         selectedApplication && !viewApplication && (
                             <>
                             { console.log('selectedApplication:', formData)}
-                            { <SubmittedApplication 
+                            {<SubmittedApplication 
+                                formData={formData} 
+                                loading={loading}
+                                onInputChange={onInputChange}
+                                onReview={onReview}
+                                onApprove={onApprove}
+                                onReject={onReject}
+                            />}
+                            {/* <SubmittedApplication 
                                 formData={formData} 
                                 loading={loading}
                                 onInputChange={onInputChange}
                                 onSubmit={onSubmit}
-                            /> }
+                            /> */}
                             {/*<ModifyApplication
                                 formData={formData}
                                 setFormData={setFormData}

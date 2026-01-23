@@ -1,16 +1,19 @@
 package com.pjdereva.minto.membership.dto.application;
 
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import com.pjdereva.minto.membership.model.transaction.SiblingType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class SiblingDTO extends PersonDTO {
+@Builder
+public class SiblingDTO {
 
     private Long id;
-    private String siblingType;
+    private PersonDTO person;
+    private SiblingType siblingType;
     private String notes;
 }

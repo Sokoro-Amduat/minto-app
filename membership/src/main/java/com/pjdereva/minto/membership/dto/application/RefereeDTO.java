@@ -1,19 +1,22 @@
 package com.pjdereva.minto.membership.dto.application;
 
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class RefereeDTO extends PersonDTO {
+@Builder
+public class RefereeDTO {
 
     private Long id;
+    private ApplicationDTO application;
+    private PersonDTO person;
     private String membershipNumber;
-    private String comments;
-    private String notes;
     private String referenceDate;
     private boolean contacted;
+    private String comments;
+    private String notes;
 }

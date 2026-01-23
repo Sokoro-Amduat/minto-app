@@ -2,7 +2,7 @@ package com.pjdereva.minto.membership.service.impl;
 
 import com.pjdereva.minto.membership.dto.application.ApplicationDTO;
 import com.pjdereva.minto.membership.dto.application.PersonDTO;
-import com.pjdereva.minto.membership.mapper.ApplicationMapper;
+import com.pjdereva.minto.membership.mapper.*;
 import com.pjdereva.minto.membership.model.*;
 import com.pjdereva.minto.membership.model.transaction.*;
 import com.pjdereva.minto.membership.repository.ApplicationRepository;
@@ -32,6 +32,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final UserRepository userRepository;
     private final PersonRepository personRepository;
     private final ApplicationMapper applicationMapper;
+    private final ParentMapper parentMapper;
+    private final SpouseMapper spouseMapper;
+    private final ChildMapper childMapper;
+    private final SiblingMapper siblingMapper;
+    private final RefereeMapper refereeMapper;
+    private final RelativeMapper relativeMapper;
+    private final BeneficiaryMapper beneficiaryMapper;
 
     /**
      * User creates a new application
@@ -134,11 +141,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         // Add parents
         if (request.getParents() != null) {
             request.getParents().forEach(parentReq -> {
+                /*
                 Person parentPerson = createPersonFromRequest(parentReq);
                 Parent parent = Parent.builder()
                         .person(parentPerson)
-                        .parentType(ParentType.valueOf(parentReq.getParentType()))
-                        .build();
+                        .parentType(parentReq.getParentType())
+                        .build(); */
+                Parent parent = parentMapper.toParent(parentReq);
                 application.addParent(parent);
             });
         }
@@ -146,11 +155,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         // Add spouses
         if (request.getSpouses() != null) {
             request.getSpouses().forEach(spouseReq -> {
+                /*
                 Person spousePerson = createPersonFromRequest(spouseReq);
                 Spouse spouse = Spouse.builder()
                         .person(spousePerson)
-                        .maritalStatus(MaritalStatus.valueOf(spouseReq.getMaritalStatus()))
-                        .build();
+                        .maritalStatus(spouseReq.getMaritalStatus())
+                        .build(); */
+                Spouse spouse = spouseMapper.toSpouse(spouseReq);
                 application.addSpouse(spouse);
             });
         }
@@ -158,11 +169,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         // Add children
         if (request.getChildren() != null) {
             request.getChildren().forEach(childReq -> {
+                /*
                 Person childPerson = createPersonFromRequest(childReq);
                 Child child = Child.builder()
                         .person(childPerson)
-                        .childType(ChildType.valueOf(childReq.getChildType()))
-                        .build();
+                        .childType(childReq.getChildType())
+                        .build(); */
+                Child child = childMapper.toChild(childReq);
                 application.addChild(child);
             });
         }
@@ -170,11 +183,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         // Add siblings
         if (request.getSiblings() != null) {
             request.getSiblings().forEach(siblingRequest -> {
+                /*
                 Person siblingPerson = createPersonFromRequest(siblingRequest);
                 Sibling sibling = Sibling.builder()
                         .person(siblingPerson)
-                        .siblingType(SiblingType.valueOf(siblingRequest.getSiblingType()))
-                        .build();
+                        .siblingType(siblingRequest.getSiblingType())
+                        .build(); */
+                Sibling sibling = siblingMapper.toSibling(siblingRequest);
                 application.addSibling(sibling);
             });
         }
@@ -182,11 +197,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         // Add referees
         if (request.getReferees() != null) {
             request.getReferees().forEach(refereeRequest -> {
+                /*
                 Person refereePerson = createPersonFromRequest(refereeRequest);
                 Referee referee = Referee.builder()
                         .person(refereePerson)
                         .membershipNumber((refereeRequest.getMembershipNumber() == null) ? "MEM-New-001" : refereeRequest.getMembershipNumber())
-                        .build();
+                        .build(); */
+                Referee referee = refereeMapper.toReferee(refereeRequest);
                 application.addReferee(referee);
             });
         }
@@ -194,12 +211,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         // Add relatives
         if (request.getRelatives() != null) {
             request.getRelatives().forEach(relativeRequest -> {
+                /*
                 Person relativePerson = createPersonFromRequest(relativeRequest);
                 Relative relative = Relative.builder()
                         .person(relativePerson)
                         .membershipNumber((relativeRequest.getMembershipNumber() == null) ? "MEM-New-001" : relativeRequest.getMembershipNumber())
-                        .familyRelationship(FamilyRelationship.valueOf(relativeRequest.getFamilyRelationship()))
-                        .build();
+                        .familyRelationship(relativeRequest.getFamilyRelationship())
+                        .build(); */
+                Relative relative = relativeMapper.toRelative(relativeRequest);
                 application.addRelative(relative);
             });
         }
@@ -207,12 +226,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         // Add beneficiaries
         if (request.getBeneficiaries() != null) {
             request.getBeneficiaries().forEach(beneficiaryRequest -> {
+                /*
                 Person beneficiaryPerson = createPersonFromRequest(beneficiaryRequest);
                 Beneficiary beneficiary = Beneficiary.builder()
                         .person(beneficiaryPerson)
                         .relationship(beneficiaryRequest.getRelationship())
                         .percentage(beneficiaryRequest.getPercentage())
-                        .build();
+                        .build(); */
+                Beneficiary beneficiary = beneficiaryMapper.toBeneficiary(beneficiaryRequest);
                 application.addBeneficiary(beneficiary);
             });
         }
@@ -401,6 +422,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public List<Application> findAllByApplicationStatusIn(List<ApplicationStatus> applicationStatuses) {
+        return applicationRepository.findAllByApplicationStatusIn(applicationStatuses);
+    }
+
+    @Override
     public Optional<Application> findById(Long id) {
         return applicationRepository.findById(id);
     }
@@ -441,7 +467,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 request.getContact().getAddresses().forEach(addressRequest -> {
                     log.info("Add address: {}", addressRequest);
                     Address address = Address.builder()
-                            .addressType(AddressType.valueOf(addressRequest.getAddressType()))
+                            .addressType(addressRequest.getAddressType())
                             .street(addressRequest.getStreet())
                             .city(addressRequest.getCity())
                             .state(addressRequest.getState())
@@ -456,7 +482,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 request.getContact().getEmails().forEach(emailRequest -> {
                     log.info("Add email: {}", emailRequest);
                     Email email = Email.builder()
-                            .emailType(EmailType.valueOf(emailRequest.getEmailType()))
+                            .emailType(emailRequest.getEmailType())
                             .address(emailRequest.getAddress())
                             .build();
                     contact.addEmail(email);
@@ -467,7 +493,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 request.getContact().getPhones().forEach(phoneRequest -> {
                     log.info("Add phone: {}", phoneRequest);
                     Phone phone = Phone.builder()
-                            .phoneType(PhoneType.valueOf(phoneRequest.getPhoneType()))
+                            .phoneType(phoneRequest.getPhoneType())
                             .number(phoneRequest.getNumber())
                             .countryCode(phoneRequest.getCountryCode())
                             .build();
