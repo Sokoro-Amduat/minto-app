@@ -138,9 +138,9 @@ const SignUp = () => {
                 });
 
                 if(!response.ok) {
-                    console.log(`HTTP error! status: ${response.status}`)
+                    console.log(`HTTP Error! status: ${response.status}`)
                     toast.error('HTTP Error: Response NOT ok!')
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP Error! status: ${response.status}`);
                 }
 
                 const jsonData = await response.json();
@@ -160,16 +160,21 @@ const SignUp = () => {
                 
                 navigate('/login')
             } catch (error) {
-                console.log(error)
                 const newErrors = {}
+                console.error('Network request failed:', error.message);
+                
                 if(error.request) {
-                    newErrors.request = `[ERROR]:- Request error: ${error.request}`
+                    newErrors.request = `Request error: ${error.request}`
                     setSignUpError(newErrors)
                 } else if(error.response) {
-                    newErrors.response = `[ERROR]:- Response error: ${error.response}`
+                    newErrors.response = `Response error: ${error.response}`
+                    setSignUpError(newErrors)
+                } else if (error.message.includes('Network request failed') || 
+                    error.message.includes('ERR_CONNECTION_REFUSED') || error.message.includes('Failed to fetch')) {
+                    newErrors.error = 'The server is currently offline. Please try again later.'
                     setSignUpError(newErrors)
                 } else {
-                    newErrors.error = `[ERROR]:- ${error.message}`
+                    newErrors.error = `Error: ${error.message}`
                     setSignUpError(newErrors)
                 }
             }
@@ -180,13 +185,15 @@ const SignUp = () => {
     }
 
     if (signUpError.error) {
-        if (signUpError.error.includes('HTTP error')) {
-            // Handle 500 errors here
-            return <ErrorPage status={500} message={'Oops! Something went wrong on the server.'} />;
-        } 
         console.log(signUpError.error)
-        console.log("[SignUp] - Testing...line 263");
-        return <ErrorPage status={401} message={signUpError.error} />;
+        if (signUpError.error.includes('HTTP Error') || 
+            signUpError.error.includes('Request error') ||
+            signUpError.error.includes('Response error') || 
+            signUpError.error.includes('The server is currently offline')) {
+            // Handle 500 errors here
+            return <ErrorPage status={500} message={'Oops! Something went wrong on the server. Please try again later.'} />;
+        }
+        return <ErrorPage status={400} message={signUpError.error} />;
     }
 
     return (

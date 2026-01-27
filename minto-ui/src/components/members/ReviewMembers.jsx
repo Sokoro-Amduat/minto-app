@@ -6,8 +6,9 @@ import ApplicationsGrid from "../grid/ApplicationsGrid"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import useFetch from "../hooks/useFetch"
-import AddMember from "./AddMember"
+//import AddMember from "./AddMember"
 import { defaultMember } from "../../model/defaultMember"
+import ActivateMember from "./ActivateMember"
 
 const ReviewMembers = () => {
     const navigate = useNavigate()
@@ -25,6 +26,8 @@ const ReviewMembers = () => {
             setFormData(prev => ({
                 ...prev,
                 application: selectedApplication,
+                user: selectedApplication.user,
+                person: selectedApplication.person,
             }))
         }
 
@@ -45,7 +48,7 @@ const ReviewMembers = () => {
         console.log('FormData:', formData)
 
         try {
-            const response = await fetchWithAuth(`http://localhost:8080/api/v1/members`, {
+            const response = await fetchWithAuth(`http://localhost:8080/api/v1/members/draft`, {
                 method: 'POST',
                 credentials: "include",
                 headers: { 
@@ -55,14 +58,15 @@ const ReviewMembers = () => {
             });
 
             if(!response.ok) {
-                console.log(`HTTP error! status: ${response.status}`)
-                toast.error('HTTP error!')
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorResp = await response.json()
+                console.log(`Error: ${response.status} - ${errorResp.message}`)
+                toast.error(`Error: ${response.status} - ${errorResp.message}`)
+                throw new Error(`Error: ${response.status} - ${errorResp.message}`);
             }
 
             const jsonData = await response.json();
-            setFormData(jsonData)
-            //console.log(jsonData);
+            //setFormData(jsonData)
+            console.log(jsonData.message);
             setMessage('Update successful')
             toast.success('Update successful')
             navigate('/login')
@@ -108,12 +112,18 @@ const ReviewMembers = () => {
                         selectedApplication && !viewApplication && (
                             <>
                             { console.log('formData:', formData)}
-                            { <AddMember 
+                            { <ActivateMember 
                                 formData={formData} 
                                 setFormData={setFormData}
                                 loading={loading}
                                 onSubmit={onSubmit}
-                            /> }
+                             /> }
+                            {/* <AddMember 
+                                formData={formData} 
+                                setFormData={setFormData}
+                                loading={loading}
+                                onSubmit={onSubmit}
+                            /> */}
                             {/*<ModifyApplication
                                 formData={formData}
                                 setFormData={setFormData}

@@ -29,7 +29,7 @@ const Login = () => {
             setPassword('')
             setLoginError(null)
         } catch (err) {
-            console.log(err)
+            console.log(err.message)
             setLoginError('Invalid username or password!')
         }
     }
